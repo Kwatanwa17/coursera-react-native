@@ -12,7 +12,6 @@ const Stack = createStackNavigator();
 
 function MenuNavigator() {
     return (
-
         <Stack.Navigator
             screenOptions={{
                 initialRouteName: 'Menu',
@@ -37,13 +36,11 @@ function MenuNavigator() {
                 options={{title: 'Dishdetail'}}
             />
         </Stack.Navigator>
-
     );
 }
 
 function HomeNavigator() {
     return (
-
         <Stack.Navigator
             screenOptions={{
                 navigationOptions: {
@@ -62,7 +59,6 @@ function HomeNavigator() {
                 options={{title: 'Home'}}
             />
         </Stack.Navigator>
-
     );
 }
 
