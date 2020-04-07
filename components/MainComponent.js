@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import Home from "./HomeComponent";
 import Menu from './MenuComponent';
+import Contact from "./ContactComponent";
 import Dishdetail from './DishdetailComponent';
 import {View, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -62,6 +63,29 @@ function HomeNavigator() {
     );
 }
 
+function ContactNavigator() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                navigationOptions: {
+                    headerStyle: {
+                        backgroundColor: '#512DA8'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: '#fff'
+                    }
+                }
+            }}>
+            <Stack.Screen
+                name="Contact"
+                component={Contact}
+                options={{title: 'Contact'}}
+            />
+        </Stack.Navigator>
+    );
+}
+
 const Drawer = createDrawerNavigator();
 
 function MainNavigator() {
@@ -73,6 +97,7 @@ function MainNavigator() {
                               }}>
                 <Drawer.Screen name="Home" component={HomeNavigator}/>
                 <Drawer.Screen name="Menu" component={MenuNavigator}/>
+                <Drawer.Screen name="Contact" component={ContactNavigator}/>
             </Drawer.Navigator>
         </NavigationContainer>
     );
