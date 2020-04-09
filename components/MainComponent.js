@@ -9,7 +9,10 @@ import {View, Platform, Text, ScrollView, Image, StyleSheet, SafeAreaView} from 
 import {Icon} from 'react-native-elements';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import {
+    createDrawerNavigator, DrawerContentScrollView,
+    DrawerItemList
+} from '@react-navigation/drawer';
 import Constants from 'expo-constants';
 
 const Stack = createStackNavigator();
@@ -136,7 +139,25 @@ function AboutNavigator({navigation}) {
     );
 }
 
+
 const Drawer = createDrawerNavigator();
+
+const CustomDrawerContentComponent = (props) => (
+    <DrawerContentScrollView>
+        <SafeAreaView style={styles.container} forceInset={{top: 'always', horizontal: 'never'}}>
+            <View style={styles.drawerHeader}>
+                <View style={{flex: 1}}>
+                    <Image source={require('./images/logo.png')} style={styles.drawerImage}/>
+                </View>
+                <View style={{flex: 2}}>
+                    <Text style={styles.drawerHeaderText}>Ristorante Con Fusion</Text>
+                </View>
+            </View>
+            <DrawerItemList {...props} />
+        </SafeAreaView>
+    </DrawerContentScrollView>
+);
+
 
 function MainNavigator(props) {
     return (
@@ -144,11 +165,12 @@ function MainNavigator(props) {
             <Drawer.Navigator initialRouteName="Home"
                               drawerStyle={{
                                   backgroundColor: '#D1C4E9'
-                              }}>
+                              }}
+                              drawerContent={CustomDrawerContentComponent}>
                 <Drawer.Screen name="Home"
                                component={HomeNavigator}
                                options={{
-                                   drawerIcon: ({ color, focused }) =>
+                                   drawerIcon: ({color, focused}) =>
                                        (<Icon
                                            name='home'
                                            type='font-awesome'
@@ -160,7 +182,7 @@ function MainNavigator(props) {
                     name="About Us"
                     component={AboutNavigator}
                     options={{
-                        drawerIcon: ({ color, focused }) =>
+                        drawerIcon: ({color, focused}) =>
                             (<Icon
                                 name='info-circle'
                                 type='font-awesome'
@@ -172,7 +194,7 @@ function MainNavigator(props) {
                     name="Menu"
                     component={MenuNavigator}
                     options={{
-                        drawerIcon: ({ color, focused }) =>
+                        drawerIcon: ({color, focused}) =>
                             (<Icon
                                 name='list'
                                 type='font-awesome'
@@ -184,7 +206,7 @@ function MainNavigator(props) {
                     name="Contact Us"
                     component={ContactNavigator}
                     options={{
-                        drawerIcon: ({ color, focused }) =>
+                        drawerIcon: ({color, focused}) =>
                             (<Icon
                                 name='address-card'
                                 type='font-awesome'
@@ -207,5 +229,30 @@ class Main extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    drawerHeader: {
+        backgroundColor: '#512DA8',
+        height: 140,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row'
+    },
+    drawerHeaderText: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold'
+    },
+    drawerImage: {
+        margin: 10,
+        width: 80,
+        height: 60
+    }
+});
+
 
 export default Main;
