@@ -22,6 +22,7 @@ function RenderItem(props) {
     const item = props.item;
 
     if (props.isLoading) {
+        console.log(props.isLoading);
         return (
             <Loading/>
         );

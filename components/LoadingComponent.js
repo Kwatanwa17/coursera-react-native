@@ -3,7 +3,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     Text,
-    View,
+    View
 } from 'react-native'
 
 const styles = StyleSheet.create({
