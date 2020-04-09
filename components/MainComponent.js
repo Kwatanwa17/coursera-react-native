@@ -17,6 +17,7 @@ import Constants from 'expo-constants';
 
 import { connect } from 'react-redux';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
+import Reservation from './ReservationComponent';
 
 const mapStateToProps = state => {
     return {
@@ -159,6 +160,35 @@ function AboutNavigator({navigation}) {
     );
 }
 
+function ReservationNavigator({navigation}) {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                navigationOptions: {
+                    headerStyle: {
+                        backgroundColor: '#512DA8'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: '#fff'
+                    }
+                }
+            }}>
+            <Stack.Screen
+                name="Reservation"
+                component={Reservation}
+                options={{
+                    title: 'Reservation',
+                    headerLeft: () => (<Icon name="menu" size={24}
+                                             color='black'
+                                             onPress={() => navigation.toggleDrawer()}/>
+                    ),
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 
 const Drawer = createDrawerNavigator();
 
@@ -229,6 +259,18 @@ function MainNavigator(props) {
                         drawerIcon: ({color, focused}) =>
                             (<Icon
                                 name='address-card'
+                                type='font-awesome'
+                                size={24}
+                                color={color}/>),
+                    }}
+                />
+                <Drawer.Screen
+                    name="Reserve Table"
+                    component={ReservationNavigator}
+                    options={{
+                        drawerIcon: ({color, focused}) =>
+                            (<Icon
+                                name='cutlery'
                                 type='font-awesome'
                                 size={24}
                                 color={color}/>),
