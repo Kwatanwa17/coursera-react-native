@@ -5,6 +5,17 @@ import {DISHES} from '../shared/dishes';
 import Constants from "expo-constants";
 import {COMMENTS} from '../shared/comments';
 
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+
+const mapStateToProps = state => {
+    return {
+        dishes: state.dishes,
+        comments: state.comments
+    }
+};
+
 function RenderDish(props) {
 
     const dish = props.dish;
@@ -13,10 +24,8 @@ function RenderDish(props) {
         return (
             <Card
                 featuredTitle={dish.name}
-                image={require('./images/uthappizza.png')}>
-                <Text style={{margin: 10}}>
-                    {dish.description}
-                </Text>
+                image={{uri: baseUrl + dish.image}}>
+                <Text style={{margin: 10}}>{dish.description}</Text>
                 <Icon
                     raised
                     reverse
@@ -61,7 +70,7 @@ function RenderComments(props) {
     );
 }
 
-class Dishdetail extends Component {
+class DishDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -83,14 +92,15 @@ class Dishdetail extends Component {
     render() {
         console.log(this.props.route.params.dishId);
         const dishId = this.props.route.params.dishId ? this.props.route.params.dishId : '';
+
         return (
             <SafeAreaView style={{flex: 1}}>
                 <ScrollView>
-                    <RenderDish dish={this.state.dishes[+dishId]}
+                    <RenderDish dish={this.props.dishes.dishes[+dishId]}
                                 favorite={this.state.favorites.some(el => el === dishId)}
                                 onPress={() => this.markFavorite(dishId)}
                     />
-                    <RenderComments comments={this.state.comments.filter((comment) => comment.dishId === dishId)}
+                    <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)}
                                     scrollEnabled={this.state.scrollEnabled}/>
                 </ScrollView>
             </SafeAreaView>
@@ -99,4 +109,4 @@ class Dishdetail extends Component {
 
 }
 
-export default Dishdetail;
+export default connect(mapStateToProps)(DishDetail);
