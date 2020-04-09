@@ -1,15 +1,16 @@
-import React, { Component }from 'react';
-import {Platform, Text, View} from 'react-native';
-import { Card } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
+import React, {Component} from 'react';
+import {Text, View, ScrollView, FlatList, SafeAreaView} from 'react-native';
+import {Card} from 'react-native-elements';
+import {DISHES} from '../shared/dishes';
 import Constants from "expo-constants";
+import {COMMENTS} from '../shared/comments';
 
 function RenderDish(props) {
 
     const dish = props.dish;
 
     if (dish != null) {
-        return(
+        return (
             <Card
                 featuredTitle={dish.name}
                 image={require('./images/uthappizza.png')}>
@@ -18,17 +19,47 @@ function RenderDish(props) {
                 </Text>
             </Card>
         );
+    } else {
+        return (<View></View>);
     }
-    else {
-        return(<View></View>);
-    }
+}
+
+function RenderComments(props) {
+
+    const comments = props.comments;
+
+    const scrollEnabled = props.scrollEnabled;
+
+    const renderCommentItem = ({item, index}) => {
+
+        return (
+            <View key={index} style={{margin: 10}}>
+                <Text style={{fontSize: 14}}>{item.comment}</Text>
+                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Text style={{fontSize: 12}}>{'-- ' + item.author + ', ' + item.date} </Text>
+            </View>
+        );
+    };
+
+    return (
+        <Card title='Comments'>
+            <FlatList
+                data={comments}
+                renderItem={renderCommentItem}
+                keyExtractor={item => item.id.toString()}
+                scrollEnabled={scrollEnabled}
+            />
+        </Card>
+    );
 }
 
 class Dishdetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dishes: DISHES
+            dishes: DISHES,
+            comments: COMMENTS,
+            scrollEnabled: false
         };
     }
 
@@ -40,7 +71,13 @@ class Dishdetail extends Component {
         console.log(this.props.route.params.dishId);
         const dishId = this.props.route.params.dishId ? this.props.route.params.dishId : '';
         return (
-            <RenderDish dish={this.state.dishes[+dishId]} />
+            <SafeAreaView style={{flex: 1}}>
+                <ScrollView>
+                    <RenderDish dish={this.state.dishes[+dishId]}/>
+                    <RenderComments comments={this.state.comments.filter((comment) => comment.dishId === dishId)}
+                                    scrollEnabled={this.state.scrollEnabled}/>
+                </ScrollView>
+            </SafeAreaView>
         );
     }
 
