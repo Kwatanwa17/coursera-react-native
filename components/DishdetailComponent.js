@@ -7,7 +7,7 @@ import {COMMENTS} from '../shared/comments';
 
 import {connect} from 'react-redux';
 import {baseUrl} from '../shared/baseUrl';
-import {postFavorite} from '../redux/ActionCreators';
+import {postFavorite, postComment, fetchComments} from '../redux/ActionCreators';
 
 
 const mapStateToProps = state => {
@@ -19,8 +19,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    postFavorite: (dishId) => dispatch(postFavorite(dishId))
-})
+    postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+    postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment)),
+    fetchComments: () => dispatch(fetchComments())
+});
 
 function RenderDish(props) {
 
@@ -70,7 +72,14 @@ function RenderComments(props) {
         return (
             <View key={index} style={{margin: 10}}>
                 <Text style={{fontSize: 14}}>{item.comment}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Text style={{marginVertical: 10}}>
+                    <Rating
+                        imageSize={15}
+                        readonly
+                        startingValue={item.rating}
+                    />
+                </Text>
+
                 <Text style={{fontSize: 12}}>{'-- ' + item.author + ', ' + item.date} </Text>
             </View>
         );
@@ -91,14 +100,25 @@ function RenderComments(props) {
 class DishDetail extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             dishes: DISHES,
             comments: COMMENTS,
             favorites: [],
             scrollEnabled: false,
-            showModal: false
+            showModal: false,
+            rating: 3,
+            author: '',
+            comment: '',
         };
+
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleComment = this.handleComment.bind(this);
     }
+
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     this.props.fetchComments();
+    // }
 
     static navigationOptions = {
         title: 'Dish Details'
@@ -112,9 +132,11 @@ class DishDetail extends Component {
         this.setState({showModal: !this.state.showModal})
     }
 
-    handleComment() {
-        console.log(JSON.stringify(this.state));
+    handleComment(dishId, rating, author, comment) {
+        console.log(dishId, rating, author, comment);
+        this.props.postComment(dishId, rating, author, comment);
         this.toggleModal();
+        this.props.fetchComments();
     }
 
     render() {
@@ -144,23 +166,58 @@ class DishDetail extends Component {
                     <SafeAreaView style={styles.modal}>
 
                         <Text>This is a modal</Text>
+                        <Rating
+                            showRating
+                            // onFinishRating={this.ratingCompleted}
+                            style={{paddingVertical: 10}}
+                            onFinishRating={(value) => this.setState({rating: value})}
+                        />
+                        <Input
+                            placeholder='Author'
+                            onChangeText={(text) => this.setState({author: text})}
+                            leftIcon={
+                                <Icon
+                                    name='user-o'
+                                    type='font-awesome'
+                                    size={24}
+                                    color='black'
+                                    iconStyle={{marginRight: 10}}
+                                />
+                            }
+                        />
+                        <Input
+                            placeholder='Comment'
+                            onChangeText={(text) => this.setState({comment: text})}
+                            leftIcon={
+                                <Icon
+                                    name='comment-o'
+                                    type='font-awesome'
+                                    size={24}
+                                    color='black'
+                                    iconStyle={{marginRight: 10}}
+                                />
+                            }
+                        />
 
-                        <Button
-                            onPress={() => {
-                                this.toggleModal();
-                            }}
-                            color='#512DA8'
-                            title='SUBMIT'
-                        >
-                        </Button>
-                        <Button
-                            onPress={() => {
-                                this.toggleModal();
-                            }}
-                            color='#512DA8'
-                            title='CANCEL'
-                        >
-                        </Button>
+                        <View style={styles.buttonRow}>
+                            <Button
+                                onPress={() => {
+                                    this.handleComment(dishId, this.state.rating, this.state.author, this.state.comment);
+                                }}
+                                color='#512DA8'
+                                title='SUBMIT'
+                            >
+                            </Button>
+                            <Button
+                                onPress={() => {
+                                    this.toggleModal();
+                                }}
+                                color='#512DA8'
+                                title='CANCEL'
+                            >
+                            </Button>
+                        </View>
+
                     </SafeAreaView>
 
                 </Modal>
@@ -178,11 +235,8 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
-    formRow: {
+    buttonRow: {
         alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        flexDirection: 'row',
         margin: 20
     },
     formLabel: {
