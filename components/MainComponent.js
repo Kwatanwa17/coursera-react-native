@@ -4,6 +4,7 @@ import Menu from './MenuComponent';
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import DishDetail from './DishdetailComponent';
+import Favorites from './FavoriteComponent';
 
 import {View, Platform, Text, ScrollView, Image, StyleSheet, SafeAreaView} from 'react-native';
 import {Icon} from 'react-native-elements';
@@ -189,6 +190,35 @@ function ReservationNavigator({navigation}) {
     );
 }
 
+function FavoritesNavigator({navigation}) {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                navigationOptions: {
+                    headerStyle: {
+                        backgroundColor: '#512DA8'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: '#fff'
+                    }
+                }
+            }}>
+            <Stack.Screen
+                name="Favorites"
+                component={Favorites}
+                options={{
+                    title: 'Favorites',
+                    headerLeft: () => (<Icon name="menu" size={24}
+                                             color='black'
+                                             onPress={() => navigation.toggleDrawer()}/>
+                    ),
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 
 const Drawer = createDrawerNavigator();
 
@@ -271,6 +301,18 @@ function MainNavigator(props) {
                         drawerIcon: ({color, focused}) =>
                             (<Icon
                                 name='cutlery'
+                                type='font-awesome'
+                                size={24}
+                                color={color}/>),
+                    }}
+                />
+                <Drawer.Screen
+                    name="My Favorites"
+                    component={FavoritesNavigator}
+                    options={{
+                        drawerIcon: ({color, focused}) =>
+                            (<Icon
+                                name='heart'
                                 type='font-awesome'
                                 size={24}
                                 color={color}/>),

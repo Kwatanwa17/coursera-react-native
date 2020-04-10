@@ -116,10 +116,6 @@ class DishDetail extends Component {
         this.handleComment = this.handleComment.bind(this);
     }
 
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-    //     this.props.fetchComments();
-    // }
-
     static navigationOptions = {
         title: 'Dish Details'
     };
@@ -135,8 +131,9 @@ class DishDetail extends Component {
     handleComment(dishId, rating, author, comment) {
         console.log(dishId, rating, author, comment);
         this.props.postComment(dishId, rating, author, comment);
-        this.toggleModal();
         this.props.fetchComments();
+        this.toggleModal();
+
     }
 
     render() {
