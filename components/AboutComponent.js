@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import {baseUrl} from '../shared/baseUrl';
 import {Loading} from './LoadingComponent';
 
+import * as Animatable from 'react-native-animatable';
+
 const mapStateToProps = state => {
     return {
         leaders: state.leaders
@@ -80,11 +82,13 @@ class About extends Component {
         } else if (this.props.leaders.errMess) {
             return (
                 <ScrollView>
-                    <History/>
-                    <Card
-                        title='Corporate Leadership'>
-                        <Text>{this.props.leaders.errMess}</Text>
-                    </Card>
+                    <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                        <History />
+                        <Card
+                            title='Corporate Leadership'>
+                            <Text>{this.props.leaders.errMess}</Text>
+                        </Card>
+                    </Animatable.View>
                 </ScrollView>
             );
         } else {
@@ -93,19 +97,19 @@ class About extends Component {
                 <SafeAreaView style={{flex: 1}}>
 
                     <ScrollView>
-                        <History/>
-
-                        <Card title='Cooporate Leadership'>
-
-                            <FlatList
-                                data={this.props.leaders.leaders}
-                                renderItem={renderLeaderItem}
-                                keyExtractor={item => item.id.toString()}
-                                scrollEnabled={this.state.scrollEnabled}
-                            />
-
-                        </Card>
+                        <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+                            <History />
+                            <Card
+                                title='Corporate Leadership'>
+                                <FlatList
+                                    data={this.props.leaders.leaders}
+                                    renderItem={renderLeaderItem}
+                                    keyExtractor={item => item.id.toString()}
+                                />
+                            </Card>
+                        </Animatable.View>
                     </ScrollView>
+
 
 
                 </SafeAreaView>
