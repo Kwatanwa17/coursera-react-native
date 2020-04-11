@@ -78,7 +78,6 @@ function RenderDish(props) {
         }
     });
 
-    handleViewRef = ref => this.view = ref;
 
     if (dish != null) {
         return (
