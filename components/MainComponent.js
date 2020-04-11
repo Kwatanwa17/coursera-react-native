@@ -5,6 +5,7 @@ import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import DishDetail from './DishdetailComponent';
 import Favorites from './FavoriteComponent';
+import Login from './LoginComponent';
 
 import {View, Platform, Text, ScrollView, Image, StyleSheet, SafeAreaView} from 'react-native';
 import {Icon} from 'react-native-elements';
@@ -219,6 +220,35 @@ function FavoritesNavigator({navigation}) {
     );
 }
 
+function LoginNavigator({navigation}) {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                navigationOptions: {
+                    headerStyle: {
+                        backgroundColor: '#512DA8'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: '#fff'
+                    }
+                }
+            }}>
+            <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{
+                    title: 'Login',
+                    headerLeft: () => (<Icon name="menu" size={24}
+                                             color='black'
+                                             onPress={() => navigation.toggleDrawer()}/>
+                    ),
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 
 const Drawer = createDrawerNavigator();
 
@@ -247,6 +277,18 @@ function MainNavigator(props) {
                                   backgroundColor: '#D1C4E9'
                               }}
                               drawerContent={CustomDrawerContentComponent}>
+                <Drawer.Screen
+                    name="Login"
+                    component={LoginNavigator}
+                    options={{
+                        drawerIcon: ({color, focused}) =>
+                            (<Icon
+                                name='sign-in'
+                                type='font-awesome'
+                                size={24}
+                                color={color}/>),
+                    }}
+                />
                 <Drawer.Screen name="Home"
                                component={HomeNavigator}
                                options={{
