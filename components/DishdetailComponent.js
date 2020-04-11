@@ -40,10 +40,15 @@ function RenderDish(props) {
 
     const dish = props.dish;
 
-    handleViewRef = ref => this.view=ref;
-
     const recognizeDrag = ({moveX, moveY, dx, dy}) => {
         if (dx < -200)
+            return true;
+        else
+            return false;
+    }
+
+    const recognizeComment = ({moveX, moveY, dx, dy}) => {
+        if (dx > 200)
             return true;
         else
             return false;
@@ -54,12 +59,12 @@ function RenderDish(props) {
             return true;
         },
         onPanResponderGrant: () => {
-          this.view.rubberBand(1000)
-              .then(endState => console.log(endState.finished ? 'finished' : 'canceled'))
+            viewRef.rubberBand(1000)
+                .then(endState => console.log(endState.finished ? 'finished' : 'canceled'))
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log("pan responder end", gestureState);
-            if (recognizeDrag(gestureState))
+            if (recognizeDrag(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
                     'Are you sure you wish to add ' + dish.name + ' to favorite?',
@@ -73,17 +78,27 @@ function RenderDish(props) {
                     ],
                     {cancelable: false}
                 );
+                return true;
 
-            return true;
+            }  else if (recognizeComment(gestureState)) {
+                // console.log( "comment gesture recognized");
+
+                props.handleComment()
+
+                return true;
+            }
+
         }
+
     });
 
+    var viewRef;
+    handleViewRef = ref => viewRef = ref;
 
     if (dish != null) {
         return (
-
             <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
-                             ref={this.handleViewRef}
+                             ref={handleViewRef}
                              {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={dish.name}
@@ -105,7 +120,6 @@ function RenderDish(props) {
                             type='font-awesome'
                             color='#512DAB'
                             onPress={props.handleComment}
-
                         />
                     </View>
                 </Card>
@@ -172,6 +186,7 @@ class DishDetail extends Component {
         this.handleComment = this.handleComment.bind(this);
     }
 
+
     static navigationOptions = {
         title: 'Dish Details'
     };
@@ -218,7 +233,6 @@ class DishDetail extends Component {
 
                     <SafeAreaView style={styles.modal}>
 
-                        <Text>This is a modal</Text>
                         <Rating
                             showRating
                             // onFinishRating={this.ratingCompleted}
