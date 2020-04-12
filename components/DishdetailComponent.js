@@ -9,7 +9,8 @@ import {
     Button,
     Modal,
     Alert,
-    PanResponder
+    PanResponder,
+    Share
 } from 'react-native';
 import {Card, Icon, Input, Rating, AirbnbRating} from 'react-native-elements';
 import {DISHES} from '../shared/dishes';
@@ -80,7 +81,7 @@ function RenderDish(props) {
                 );
                 return true;
 
-            }  else if (recognizeComment(gestureState)) {
+            } else if (recognizeComment(gestureState)) {
                 // console.log( "comment gesture recognized");
 
                 props.handleComment()
@@ -94,6 +95,16 @@ function RenderDish(props) {
 
     var viewRef;
     handleViewRef = ref => viewRef = ref;
+
+    const shareDish = (title, message, url) => {
+        Share.share({
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        },{
+            dialogTitle: 'Share ' + title
+        })
+    }
 
     if (dish != null) {
         return (
@@ -121,6 +132,14 @@ function RenderDish(props) {
                             color='#512DAB'
                             onPress={props.handleComment}
                         />
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            // style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
                     </View>
                 </Card>
             </Animatable.View>
