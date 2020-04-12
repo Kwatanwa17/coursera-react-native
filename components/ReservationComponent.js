@@ -13,8 +13,10 @@ import {
     PanResponder
 } from 'react-native';
 import {Card} from 'react-native-elements';
-import DateTimePicker  from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Animatable from 'react-native-animatable';
+import {Notifications} from 'expo';
+import * as Permissions from 'expo-permissions';
 
 class Reservation extends Component {
 
@@ -41,6 +43,33 @@ class Reservation extends Component {
         });
     }
 
+    async obtainNotificationPermission() {
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to show notifications');
+            }
+        }
+        return permission;
+    }
+
+    async presentLocalNotification(date) {
+        await this.obtainNotificationPermission();
+        Notifications.presentLocalNotificationAsync({
+            title: 'Your Reservation',
+            body: 'Reservation for ' + date + ' requested',
+            ios: {
+                sound: true,
+                _displayInForeground: true
+            },
+            android: {
+                sound: true,
+                vibrate: true,
+                color: '#512DA8'
+            }
+        });
+    }
 
 
     render() {
@@ -49,15 +78,24 @@ class Reservation extends Component {
             Alert.alert(
                 "Your Reservation OK",
                 "Number of Guests: " + this.state.guests + "\n" + "Smoking? " + this.state.smoking + "\n" + "Date and Time: " + this.state.date,
-                    [
+                [
                     {
                         text: "Cancel",
-                        onPress: () => {console.log("Cancel Pressed"); this.resetForm()},
+                        onPress: () => {
+                            console.log("Cancel Pressed");
+                            this.resetForm()
+                        },
                         style: "cancel"
                     },
-                        { text: "OK", onPress: () => {console.log("Cancel Pressed"); this.resetForm()}},
-                    ],
-                { cancelable: false },
+                    {
+                        text: "OK", onPress: () => {
+                            console.log("Cancel Pressed")
+                            this.presentLocalNotification(this.state.date)
+                            this.resetForm()
+                        }
+                    },
+                ],
+                {cancelable: false},
             );
 
 
@@ -94,9 +132,9 @@ class Reservation extends Component {
                         <Text style={styles.formLabel}>Date and Time</Text>
                         <DateTimePicker
                             style={{flex: 2}}
-                            value={this.state.date ? this.state.date: new Date()}
+                            value={this.state.date ? this.state.date : new Date()}
                             mode="datetime"
-                            onChange = { (event, date) => {
+                            onChange={(event, date) => {
                                 // console.log(date);
                                 // console.log("state date: "+this.state.date);
                                 this.setState({date: date})
