@@ -16,23 +16,17 @@ const mapStateToProps = state => {
     }
 }
 
+
+
 const mapDispatchToProps = dispatch => ({
     deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId))
 })
 
 class Favorites extends Component {
 
-    static navigationOptions = {
-        title: 'My Favorites'
-    };
-
     render() {
 
-        const {navigate} = this.props.navigation;
-
-
         const renderMenuItem = ({item, index}) => {
-
 
             const rightButton = [
                 {
@@ -68,7 +62,7 @@ class Favorites extends Component {
                             title={item.name}
                             subtitle={item.description}
                             hideChevron={true}
-                            onPress={() => navigate('DishDetail', {dishId: item.id})}
+                            onPress={() => this.props.navigation.navigate('DishDetail', {dishId: item.id})}
                             leftAvatar={{source: {uri: baseUrl + item.image}}}
                         />
                     </Animatable.View>
@@ -87,6 +81,7 @@ class Favorites extends Component {
                 </View>
             );
         } else {
+
             return (
                 <FlatList
                     data={this.props.dishes.dishes.filter(dish => this.props.favorites.some(el => el === dish.id))}

@@ -24,10 +24,6 @@ class Menu extends Component {
         };
     }
 
-    static navigationOptions = {
-        title: 'Menu'
-    };
-
     render() {
         const {navigate} = this.props.navigation;
 
