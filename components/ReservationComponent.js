@@ -10,13 +10,15 @@ import {
     Modal,
     SafeAreaView,
     Alert,
-    PanResponder
+    PanResponder,
+    Platform
 } from 'react-native';
 import {Card} from 'react-native-elements';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Animatable from 'react-native-animatable';
 import {Notifications} from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
 
@@ -30,10 +32,6 @@ class Reservation extends Component {
             showModal: false
         }
     }
-
-    static navigationOptions = {
-        title: 'Reserve Table',
-    };
 
     resetForm() {
         this.setState({
@@ -71,6 +69,43 @@ class Reservation extends Component {
         });
     }
 
+    async obtainCalendarPermission() {
+        let permission = await Permissions.askAsync(Permissions.CALENDAR)
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to show notifications');
+            }
+        }
+        return permission;
+    }
+
+    async getDefaultCalendarId() {
+        const calendars = await Calendar.getCalendarsAsync()
+        return calendars[0].id
+        // console.log(calendars[0].id);
+    }
+
+    async addReservationToCalendar(date) {
+        await this.obtainCalendarPermission();
+
+        // TODO: this only works on ios devices!!!
+        const calendar = await Calendar.getDefaultCalendarAsync()
+        const calendarId = calendar.id
+        console.log(calendarId);
+
+
+        await Calendar.createEventAsync(calendarId,
+            {
+                title: 'Con Fusion Table Reservation',
+                startDate: new Date(Date.parse(date)),
+                endDate: new Date(Date.parse(date)+2*60*60*1000),
+                location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong',
+                timeZone: 'Asia/Hong_Kong'
+            })
+
+    }
+
 
     render() {
 
@@ -89,8 +124,9 @@ class Reservation extends Component {
                     },
                     {
                         text: "OK", onPress: () => {
-                            console.log("Cancel Pressed")
-                            this.presentLocalNotification(this.state.date)
+                            console.log("OK Pressed")
+                            this.presentLocalNotification(this.state.date);
+                            this.addReservationToCalendar(this.state.date);
                             this.resetForm()
                         }
                     },
@@ -101,7 +137,9 @@ class Reservation extends Component {
 
         return (
 
-            <Animatable.View animation="zoomInUp" duration={2000} delay={1000}
+            <Animatable.View animation="zoomInUp"
+                             duration={2000}
+                             delay={1000}
                              ref={this.handleViewRef}
             >
                 <ScrollView>
@@ -135,8 +173,6 @@ class Reservation extends Component {
                             value={this.state.date ? this.state.date : new Date()}
                             mode="datetime"
                             onChange={(event, date) => {
-                                // console.log(date);
-                                // console.log("state date: "+this.state.date);
                                 this.setState({date: date})
                             }}
                         />
